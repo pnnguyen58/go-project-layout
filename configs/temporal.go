@@ -14,7 +14,7 @@ func mockTempoConfig() (tc *clients.TempoConfig) {
 	tc = &clients.TempoConfig{
 		HostPort: C.Server.TempoHost,
 		Namespace: &clients.Namespace{
-			Name:                             "aspire-code-challenge",
+			Name:                             "go-project-layout",
 			WorkflowExecutionRetentionPeriod: 1720 * time.Hour,
 		},
 		Workflows: map[string]*clients.Workflow{},

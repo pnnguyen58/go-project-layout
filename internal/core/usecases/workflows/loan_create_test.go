@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	protogen "github.com/pnnguyen58/aspire-code-challenge/pkg/proto_generated"
 	"github.com/pnnguyen58/go-project-layout/internal/core/usecases/activities"
+	protogen "github.com/pnnguyen58/go-project-layout/pkg/proto_generated"
 )
 
 type UnitTestSuite struct {

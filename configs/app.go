@@ -35,17 +35,17 @@ var C config
 
 func ReadConfig() {
 	Config := &C
-	Config.Server.Name = GetEnv[string]("SERVER_NAME", "aspire-code-challenge")
+	Config.Server.Name = GetEnv[string]("SERVER_NAME", "go-project-layout")
 	Config.Server.GRPCPort = GetEnv[string]("SERVER_GRPC_PORT", "8001")
 	Config.Server.HTTPPort = GetEnv[string]("SERVER_HTTP_PORT", "9001")
 	Config.Server.TempoHost = GetEnv[string]("TEMPO_HOST", "temporal:7233")
-	Config.Server.TempoNameSpace = GetEnv[string]("TEMPO_NAMESPACE", "aspire-code-challenge")
+	Config.Server.TempoNameSpace = GetEnv[string]("TEMPO_NAMESPACE", "go-project-layout")
 
-	Config.Database.Host = GetEnv[string]("DB_HOST", "aspire-db")
+	Config.Database.Host = GetEnv[string]("DB_HOST", "go-project-layout-db")
 	Config.Database.Port = GetEnv[int]("DB_PORT", 5432)
-	Config.Database.User = GetEnv[string]("DB_USER", "aspire")
+	Config.Database.User = GetEnv[string]("DB_USER", "go_project_layout")
 	Config.Database.Password = GetEnv[string]("DB_PASSWORD", "1qazxsw23edc")
-	Config.Database.DBName = GetEnv[string]("DB_NAME", "code_challenge")
+	Config.Database.DBName = GetEnv[string]("DB_NAME", "go_project_layout")
 	Config.Database.Schema = GetEnv[string]("DB_SCHEMA", "public")
 	Config.Database.ConnMaxLifetimeSecond = GetEnv[int]("DB_CONN_MAX_LIFETIME_SECOND", 300)
 	Config.Database.MaxOpenConn = GetEnv[int]("DB_MAX_OPEN_CONN", 100)

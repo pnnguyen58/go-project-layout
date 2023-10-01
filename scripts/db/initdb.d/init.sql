@@ -17,7 +17,7 @@ $function$
 ;
 
 CREATE TABLE public.customers (
-    id bigserial NOT NULL,
+    id text NOT NULL,
     name varchar(255) NOT NULL,
     created_at timestamptz NULL DEFAULT now(),
     updated_at timestamptz NULL,
@@ -25,7 +25,7 @@ CREATE TABLE public.customers (
 );
 
 CREATE TABLE public.loans (
-    id bigserial NOT NULL,
+    id text NOT NULL,
     customer_id bigint NOT NULL,
     repayment_type varchar(255) NOT NULL,
     amount decimal NOT NULL,
@@ -34,43 +34,43 @@ CREATE TABLE public.loans (
     created_at timestamptz NULL DEFAULT now(),
     updated_at timestamptz NULL,
     PRIMARY KEY(id),
-    CONSTRAINT fk_customers FOREIGN KEY(customer_id) REFERENCES customers(id) ON DELETE SET NULL
+--     CONSTRAINT fk_customers FOREIGN KEY(customer_id) REFERENCES customers(id) ON DELETE SET NULL
 );
 
 CREATE TABLE public.repayments (
-    id bigserial NOT NULL,
-    loan_id bigint NOT NULL,
+    id text NOT NULL,
+    loan_id text NOT NULL,
     amount decimal NOT NULL,
     due_date timestamptz NOT NULL,
     state varchar(100) NOT NULL,
     created_at timestamptz NULL DEFAULT now(),
     updated_at timestamptz NULL,
     PRIMARY KEY(id),
-    CONSTRAINT fk_loans FOREIGN KEY(loan_id) REFERENCES loans(id) ON DELETE SET NULL
+--     CONSTRAINT fk_loans FOREIGN KEY(loan_id) REFERENCES loans(id) ON DELETE SET NULL
 );
 
 CREATE TABLE public.repayment_logs (
-    id bigserial NOT NULL,
-    loan_id bigint NOT NULL,
+    id text NOT NULL,
+    loan_id text NOT NULL,
     amount decimal NOT NULL,
     created_at timestamptz NULL DEFAULT now(),
     PRIMARY KEY(id),
-    CONSTRAINT fk_loans FOREIGN KEY(loan_id) REFERENCES loans(id) ON DELETE SET NULL
+--     CONSTRAINT fk_loans FOREIGN KEY(loan_id) REFERENCES loans(id) ON DELETE SET NULL
 );
 
 CREATE TABLE public.repayment_prepaid (
-    id bigserial NOT NULL,
-    loan_id bigint NOT NULL,
+    id text NOT NULL,
+    loan_id text NOT NULL,
     amount decimal NOT NULL,
     created_at timestamptz NULL DEFAULT now(),
     deleted_at timestamptz NULL,
     PRIMARY KEY(id),
-    CONSTRAINT fk_loans FOREIGN KEY(loan_id) REFERENCES loans(id) ON DELETE SET NULL
+--     CONSTRAINT fk_loans FOREIGN KEY(loan_id) REFERENCES loans(id) ON DELETE SET NULL
 );
 
 --  Setup seed data
 
-INSERT INTO public.customers ("name") VALUES('aspire-code-challenge-customer');
+INSERT INTO public.customers ("name") VALUES('go-project-layout');
 
 -- Grant permission
 GRANT CONNECT ON DATABASE go_project_layout TO go_project_layout;
