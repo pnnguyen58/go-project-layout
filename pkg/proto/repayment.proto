@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package loan;
+option go_package = "github.com/pnnguyen58/go-project-layout/proto_generated;protogen";
+
+import "google/protobuf/timestamp.proto";
+
+message Repayment {
+  string id = 1;
+  string loan_id = 2;
+  float amount = 3;
+  string state = 4;
+  google.protobuf.Timestamp due_date = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 87;
+}
+
+message RepaymentCreateRequest {
+  string loan_id = 1;
+  float amount = 2;
+  string state = 3;
+  google.protobuf.Timestamp due_date = 4;
+}
+
+message RepaymentCreateResponse {
+  Repayment data = 1;
+  string error = 2;
+  int32 code = 3;
+}
+

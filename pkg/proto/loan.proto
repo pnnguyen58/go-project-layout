@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package loan;
+option go_package = "github.com/pnnguyen58/go-project-layout/proto_generated;protogen";
+
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+
+import "pkg/proto/repayment.proto";
+
+
+message Loan {
+  string id = 1;
+  string customer_id = 2;
+  string repayment_type = 3;
+  float amount = 4;
+  int32 term = 5;
+  string state = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+  repeated Repayment repayments = 9;
+}
+
+message LoanCreateRequest {
+  string customer_id = 1;
+  float amount = 2;
+  int32 term = 3;
+}
+
+message LoanCreateResponse {
+  Loan data = 1;
+  string error = 2;
+  int32 code = 3;
+}
+
+message LoanApproveRequest {
+  string id = 1;
+}
+
+message LoanApproveResponse {
+  string data = 1;
+  string error = 2;
+  int32 code = 3;
+}
+
+message LoanGetRequest {
+  string id = 1;
+}
+
+message LoanGetResponse {
+  Loan data = 1;
+  string error = 2;
+  int32 code = 3;
+}
+
+service LoanService {
+  rpc CreateLoan(LoanCreateRequest) returns (LoanCreateResponse) {
+    option (google.api.http) = {
+      post: "/loans"
+      body: "*"
+    };
+  }
+
+  rpc ApproveLoan(LoanApproveRequest) returns (LoanApproveResponse) {
+    option (google.api.http) = {
+      put: "/loans/{id}/approve"
+      body: "*"
+    };
+  }
+
+  rpc GetLoan(LoanGetRequest) returns (LoanGetResponse) {
+    option (google.api.http) = {
+      get: "/loans/{id}"
+    };
+  }
+
+  rpc AddRepayment(RepaymentCreateRequest) returns (RepaymentCreateResponse) {
+    option (google.api.http) = {
+      post: "/loans/{loan_id}/repayments"
+      body: "*"
+    };
+  }
+}

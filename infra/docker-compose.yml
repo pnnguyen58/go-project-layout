@@ -1,0 +1,163 @@
+version: "3.5"
+
+networks:
+  go-project-layout-network:
+    driver: bridge
+    name: go-project-layout-network
+    external: true
+
+volumes:
+  go-project-layout-db:
+    driver: local
+  cache:
+    driver: local
+
+services:
+  elasticsearch:
+    container_name: temporal-elasticsearch
+    environment:
+      - cluster.routing.allocation.disk.threshold_enabled=true
+      - cluster.routing.allocation.disk.watermark.low=512mb
+      - cluster.routing.allocation.disk.watermark.high=256mb
+      - cluster.routing.allocation.disk.watermark.flood_stage=128mb
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms256m -Xmx256m
+      - xpack.security.enabled=false
+    image: elasticsearch:${ELASTICSEARCH_VERSION}
+    networks:
+      - go-project-layout-network
+    expose:
+      - 9200
+    volumes:
+      - /var/lib/elasticsearch/data
+  postgresql:
+    container_name: temporal-postgresql
+    environment:
+      POSTGRES_PASSWORD: temporal
+      POSTGRES_USER: temporal
+    image: postgres:${POSTGRESQL_VERSION}
+    networks:
+      - go-project-layout-network
+    expose:
+      - 5432
+    volumes:
+      - /var/lib/postgresql/data
+  temporal:
+    container_name: temporal
+    depends_on:
+      - postgresql
+      - elasticsearch
+    environment:
+      - DB=postgresql
+      - DB_PORT=5432
+      - POSTGRES_USER=temporal
+      - POSTGRES_PWD=temporal
+      - POSTGRES_SEEDS=postgresql
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development-sql.yaml
+      - ENABLE_ES=true
+      - ES_SEEDS=elasticsearch
+      - ES_VERSION=v7
+    image: temporalio/auto-setup:${TEMPORAL_VERSION}
+    networks:
+      - go-project-layout-network
+    ports:
+      - 7233:7233
+    labels:
+      kompose.volume.type: configMap
+    volumes:
+      - ../scripts/temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
+  temporal-admin-tools:
+    container_name: temporal-admin-tools
+    depends_on:
+      - temporal
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CLI_ADDRESS=temporal:7233
+    image: temporalio/admin-tools:${TEMPORAL_VERSION}
+    networks:
+      - go-project-layout-network
+    stdin_open: true
+    tty: true
+  temporal-ui:
+    container_name: temporal-ui
+    depends_on:
+      - temporal
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CORS_ORIGINS=http://localhost:3000
+    image: temporalio/ui:${TEMPORAL_UI_VERSION}
+    networks:
+      - go-project-layout-network
+    ports:
+      - 8080:8080
+
+  go-project-layout-db:
+    container_name: go-project-layout-db
+    image: postgres:14.1-alpine
+    restart: always
+    user: postgres
+    environment:
+      - POSTGRES_PASSWORD=!QAZxsw23edc
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - ../.volume/db:/var/lib/postgresql/data
+      - ../scripts/db/initdb.d:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'" ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    networks:
+      - go-project-layout-network
+
+  go-project-layout-loan-worker:
+    container_name: go-project-layout-loan-worker
+    depends_on:
+      - temporal
+      - go-project-layout-db
+      - go-project-layout-app
+    environment:
+      DB_HOST: go-project-layout-db
+      DB_PORT: 5432
+      DB_USER: go_project_layout
+      DB_PASSWORD: 1qazxsw23edc
+      DB_NAME: go_project_layout
+      SERVER_NAME: go-project-layout
+      SERVER_GRPC_PORT: 8001
+      SERVER_HTTP_PORT: 9001
+      TEMPO_HOST: temporal:7233
+      TEMPO_NAMESPACE: go-project-layout
+    build:
+      context: ..
+      dockerfile: ./infra/workers/Dockerfile
+    networks:
+      - go-project-layout-network
+
+  go-project-layout-app:
+    container_name: go-project-layout-app
+    depends_on:
+      go-project-layout-db:
+        condition: service_healthy
+    environment:
+      DB_HOST: go-project-layout-db
+      DB_PORT: 5432
+      DB_USER: go_project_layout
+      DB_PASSWORD: 1qazxsw23edc
+      DB_NAME: go_project_layout
+      SERVER_NAME: go-project-layout
+      SERVER_GRPC_PORT: 8001
+      SERVER_HTTP_PORT: 9001
+      TEMPO_HOST: temporal:7233
+      TEMPO_NAMESPACE: go-project-layout
+    build:
+      context: ..
+      dockerfile: ./infra/app/Dockerfile
+    ports:
+      - '8001:8001'
+      - '9001:9001'
+    networks:
+      - go-project-layout-network
+
