@@ -33,7 +33,7 @@ CREATE TABLE public.loans (
     state varchar(100) NOT NULL,
     created_at timestamptz NULL DEFAULT now(),
     updated_at timestamptz NULL,
-    PRIMARY KEY(id),
+    PRIMARY KEY(id)
 --     CONSTRAINT fk_customers FOREIGN KEY(customer_id) REFERENCES customers(id) ON DELETE SET NULL
 );
 
@@ -45,7 +45,7 @@ CREATE TABLE public.repayments (
     state varchar(100) NOT NULL,
     created_at timestamptz NULL DEFAULT now(),
     updated_at timestamptz NULL,
-    PRIMARY KEY(id),
+    PRIMARY KEY(id)
 --     CONSTRAINT fk_loans FOREIGN KEY(loan_id) REFERENCES loans(id) ON DELETE SET NULL
 );
 
@@ -54,7 +54,7 @@ CREATE TABLE public.repayment_logs (
     loan_id text NOT NULL,
     amount decimal NOT NULL,
     created_at timestamptz NULL DEFAULT now(),
-    PRIMARY KEY(id),
+    PRIMARY KEY(id)
 --     CONSTRAINT fk_loans FOREIGN KEY(loan_id) REFERENCES loans(id) ON DELETE SET NULL
 );
 
@@ -64,13 +64,13 @@ CREATE TABLE public.repayment_prepaid (
     amount decimal NOT NULL,
     created_at timestamptz NULL DEFAULT now(),
     deleted_at timestamptz NULL,
-    PRIMARY KEY(id),
+    PRIMARY KEY(id)
 --     CONSTRAINT fk_loans FOREIGN KEY(loan_id) REFERENCES loans(id) ON DELETE SET NULL
 );
 
 --  Setup seed data
 
-INSERT INTO public.customers ("name") VALUES('go-project-layout');
+INSERT INTO public.customers (id, "name") VALUES('48ccb620-6032-11ee-8c99-0242ac120002', 'go-project-layout');
 
 -- Grant permission
 GRANT CONNECT ON DATABASE go_project_layout TO go_project_layout;

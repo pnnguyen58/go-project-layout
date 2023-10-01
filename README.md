@@ -1,12 +1,18 @@
 # go-project-layout
 
 ## Description
+- This project is for golang project template
 
 
 ## Prerequisites
+- Clean architecture
+- Hexagonal architecture
+- Temporal IO
 
 
 ## Technologies and Frameworks
+- golang 1.20
+- temporal 1.24
 
 
 ## Directory structure
@@ -39,18 +45,19 @@
         |__ 📁 proto
         |__ 📁 proto_generated
     |__ 📁 scripts
+        |__ 📁 app
+        |__ 📁 workers
+        |__ docker-compose.yml
     |__ 📁 tests
+    |__ 📁 infra
     |__ Makefile
     |__ go.mod
     |__ go.sum
     |__ README.md
 
 ## How to run local
-- Run services and workers: `docker compose up --build -d`. 
-If `aspire-api` and `aspire-worker` not running, maybe initialize not done yet, please 
-re-run the docker compose command again.
-- Generate proto: `make`
-- TODO: run services and worker separately for scaling
+- Build and run: `make buildup`
+- Stop and reset volume: `make reset`
 
 ## How to test
 
